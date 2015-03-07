@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.aoc.hn.hackernews.obj.StoryItem;
@@ -21,6 +22,7 @@ public class StoryFragment extends ListFragment {
 
     List<StoryItem> mStories = null;
     StoryAdapter mAdapter = null;
+    ProgressBar progressBar = null;
 
     public StoryFragment() {
     }
@@ -37,6 +39,7 @@ public class StoryFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         return rootView;
     }
 
@@ -47,11 +50,8 @@ public class StoryFragment extends ListFragment {
     }
 
     public void hideProgressBar() {
-        View v = getView().findViewById(R.id.progressBar);
-        if(v == null) {
-            return;
-        }
-        v.setVisibility(View.GONE);
+        if(progressBar != null)
+           progressBar.setVisibility(View.GONE);
     }
 
     public void noStoriesFound() {

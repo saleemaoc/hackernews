@@ -1,10 +1,13 @@
 package com.aoc.hn.hackernews;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.aoc.hn.hackernews.obj.StoryItem;
@@ -25,7 +28,7 @@ public class StoryAdapter extends ArrayAdapter<StoryItem> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View rowView = convertView;
         // reuse row view, if possible
         if (rowView == null) {
@@ -34,6 +37,7 @@ public class StoryAdapter extends ArrayAdapter<StoryItem> {
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.title = (TextView) rowView.findViewById(R.id.title);
             viewHolder.info = (TextView) rowView.findViewById(R.id.info);
+            viewHolder.openBtn = (Button) rowView.findViewById(R.id.openBtn);
             rowView.setTag(viewHolder);
         }
         // set title and image url
@@ -53,6 +57,14 @@ public class StoryAdapter extends ArrayAdapter<StoryItem> {
             infoStr += (long) Math.floor(diff/86400) + " days ago";
         }
         holder.info.setText(infoStr);
+        holder.openBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(mStories.get(position).url));
+                mContext.startActivity(i);
+            }
+        });
         return rowView;
     }
 
@@ -69,5 +81,6 @@ public class StoryAdapter extends ArrayAdapter<StoryItem> {
     class ViewHolder {
         public TextView title = null;
         public TextView info = null;
+        public Button openBtn = null;
     }
 }

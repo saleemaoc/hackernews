@@ -4,8 +4,16 @@
     android:layout_height="match_parent"
     android:orientation="horizontal" >
 
+    <Button
+        android:id="@+id/openBtn"
+        android:layout_width="wrap_content"
+        android:text="Open"
+        android:layout_alignParentRight="true"
+        android:layout_height="wrap_content" />
+
     <TextView
         android:id="@+id/title"
+        android:layout_toLeftOf="@id/openBtn"
         android:text="Title"
         android:padding="3dp"
         android:layout_width="match_parent"

@@ -83,19 +83,9 @@ public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
 		}
 		// TODO
 		for (String id : stories) {
-			if(mCancel) {
-				break;
-			}
-			CommentsWorker cw = new CommentsWorker();
-			cw.execute(ListActivity.URL_STORY_DETAILS + id + ".json");
+            CommentsWorker cw = new CommentsWorker();
+            cw.execute(ListActivity.URL_STORY_DETAILS + id + ".json");
 		}
-
-		CommentsWorker cw = new CommentsWorker();
-		cw.execute(ListActivity.URL_STORY_DETAILS + stories.get(0) + ".json");
-
-		CommentsWorker cw2 = new CommentsWorker();
-		cw2.execute(ListActivity.URL_STORY_DETAILS + stories.get(1) + ".json");
-		
 	}
 	
 	public void log(String msg){
@@ -110,6 +100,9 @@ public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
 
 		@Override
 		protected StoryItem doInBackground(String... params) {
+            if(mCancel) {
+                return null;
+            }
 //			log("requesting " + params[0]);
 			StringBuilder sb = new StringBuilder();
 			try {
