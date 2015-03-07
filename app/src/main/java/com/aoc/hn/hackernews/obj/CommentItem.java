@@ -2,7 +2,7 @@ package com.aoc.hn.hackernews.obj;
 
 import com.google.gson.annotations.SerializedName;
 
-public class CommentObject {
+public class CommentItem {
 	@SerializedName("id")
 	public long id = -1;
 	
@@ -13,5 +13,5 @@ public class CommentObject {
 	public String author = null;
 	
 	@SerializedName("time")
-	public double time = -1;
+	public long time = -1;
 }

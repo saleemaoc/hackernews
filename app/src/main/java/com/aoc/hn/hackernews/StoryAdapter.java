@@ -22,7 +22,7 @@ public class StoryAdapter extends ArrayAdapter<StoryItem> {
     private List<StoryItem> mStories = null;
 
     public StoryAdapter(Activity context, List<StoryItem> stories) {
-        super(context, R.layout.list_item);
+        super(context, R.layout.story_list_item);
         this.mContext = context;
         this.mStories = stories;
     }
@@ -33,7 +33,7 @@ public class StoryAdapter extends ArrayAdapter<StoryItem> {
         // reuse row view, if possible
         if (rowView == null) {
             LayoutInflater inflater = mContext.getLayoutInflater();
-            rowView = inflater.inflate(R.layout.list_item, parent, false);
+            rowView = inflater.inflate(R.layout.story_list_item, parent, false);
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.title = (TextView) rowView.findViewById(R.id.title);
             viewHolder.info = (TextView) rowView.findViewById(R.id.info);
@@ -44,18 +44,7 @@ public class StoryAdapter extends ArrayAdapter<StoryItem> {
         final ViewHolder holder = (ViewHolder) rowView.getTag();
         final StoryItem si = mStories.get(position);
         holder.title.setText(si.title);
-        long currentTime = System.currentTimeMillis()/1000L;
-        long diff = currentTime - si.time;
-        String infoStr = si.points + " points by " + si.author + "  ";
-        if(diff < 60) {
-            infoStr += diff + " seconds ago";
-        } else if (diff < 3600) {
-            infoStr += (long) Math.floor(diff/60) + " minutes ago ";
-        } else if(diff < 86400) {
-            infoStr += (long) Math.floor(diff/3600) + " hours ago";
-        } else {
-            infoStr += (long) Math.floor(diff/86400) + " days ago";
-        }
+        String infoStr = si.points + " points by " + si.author + "  " + Utils.durationFromUnixTime(si.time);
         holder.info.setText(infoStr);
         holder.openBtn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -2,7 +2,7 @@ package com.aoc.hn.hackernews.obj;
 
 import com.google.gson.annotations.SerializedName;
 
-public class CommentReply {
+public class CommentReplyItem {
 	
 	@SerializedName("title")
 	public String title = null;
