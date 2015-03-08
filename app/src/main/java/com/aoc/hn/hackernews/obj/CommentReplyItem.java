@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class CommentReplyItem {
 	
-	@SerializedName("title")
-	public String title = null;
+	@SerializedName("time")
+	public long time = -1;
 	
 	@SerializedName("by")
 	public String author = null;

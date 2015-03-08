@@ -20,10 +20,19 @@
     <TextView
         android:id="@+id/content"
         android:layout_below="@id/info"
-        android:text="Title"
+        android:text="Content"
         android:padding="3dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <View
+        android:id="@+id/separator"
+        android:layout_width="match_parent"
+        android:background="@color/bg_dark"
+        android:layout_below="@id/content"
+        android:layout_marginTop="5dp"
+        android:layout_height="1dp">
+    </View>
 
     <TextView
         android:id="@+id/replyInfo"
@@ -45,5 +54,15 @@
         android:textSize="11sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.ProgressBar.Small"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/separator"
+        android:layout_marginTop="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
 </RelativeLayout>

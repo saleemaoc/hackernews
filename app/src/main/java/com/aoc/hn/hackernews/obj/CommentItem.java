@@ -20,13 +20,15 @@ public class CommentItem {
     @SerializedName("kids")
     public List<String> kids = null;
 
+    public String latestReplyId = "";
+
     public String latestReply = "";
 
     public void setLatestReply() {
         if(kids == null || kids.size() < 1) {
             return;
         }
-        latestReply = kids.get(0);
+        latestReplyId = kids.get(0);
         kids.clear();
     }
 }

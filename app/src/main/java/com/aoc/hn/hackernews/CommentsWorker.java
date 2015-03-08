@@ -38,7 +38,7 @@ public class CommentsWorker {
 	}
 
 	public void log(String msg){
-		Log.e(getClass().getName(), msg);
+		Log.e(getClass().getName(), msg + "");
 	}
 	
 	public void cancel() {

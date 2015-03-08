@@ -1,15 +1,12 @@
 package com.aoc.hn.hackernews;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.graphics.drawable.PaintDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +39,15 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         CommentItem ci = mComments.get(position);
         holder.content.setText(Html.fromHtml(ci.content));
         holder.info.setText(" Posted by " + ci.author + " " + Utils.durationFromUnixTime(ci.time));
+        if(ci.latestReply.length() <= 0) {
+            holder.replyContent.setVisibility(View.GONE);
+            holder.replyInfo.setVisibility(View.GONE);
+        }
+        if(ci.latestReplyId.length() > 0) {
+            holder.progressBar.setVisibility(View.VISIBLE);
+            ReplyWorker rw = new ReplyWorker(holder.replyContent, holder.replyInfo, holder.progressBar, ci);
+            rw.execute(ListActivity.URL_ITEM_DETAILS + ci.latestReplyId + ".json");
+        }
     }
 
     @Override
@@ -52,18 +58,23 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView content = null;
         public TextView info = null;
+        public TextView replyInfo = null;
+        public TextView replyContent = null;
+        public ProgressBar progressBar = null;
 
         public MyViewHolder(View rowView) {
             super(rowView);
-
+            this.progressBar = (ProgressBar) rowView.findViewById(R.id.progressBar);
             rowView.setOnClickListener(this);
             content = (TextView) rowView.findViewById(R.id.content);
             info = (TextView) rowView.findViewById(R.id.info);
+            replyInfo = (TextView) rowView.findViewById(R.id.replyInfo);
+            replyContent = (TextView) rowView.findViewById(R.id.replyContent);
         }
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(mContext, mComments.get(getPosition()).latestReply, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, mComments.get(getPosition()).latestReplyId, Toast.LENGTH_SHORT).show();
         }
     }
 }

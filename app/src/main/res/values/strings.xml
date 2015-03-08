@@ -6,7 +6,7 @@
     <string name="action_settings">Settings</string>
 
     <color name="primary_color">#303030</color>
-    <color name="primary_color_light">#44ffbb33</color>
+    <color name="primary_color_light">#ff888888</color>
     <color name="text_normal">#ffffff</color>
     <color name="text_dark">#ffc2c2c2</color>
     <color name="bg_dark">#c000</color>

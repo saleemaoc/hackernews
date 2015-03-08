@@ -81,7 +81,7 @@ public class CommentsFragment extends Fragment {
 
 
     public void log(String msg){
-        Log.e(getClass().getName(), msg);
+        Log.e(getClass().getName(), msg + "");
     }
 
 }
