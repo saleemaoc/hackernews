@@ -69,6 +69,7 @@ public class CommentsWorker {
 		        final GsonBuilder gsonBuilder = new GsonBuilder();
 		        final Gson gson = gsonBuilder.create();
 				CommentItem comment = gson.fromJson(sb.toString(), CommentItem.class);
+                comment.setLatestReply();
 				log(comment.content);
 				return comment;
 			} catch (IllegalStateException e) {

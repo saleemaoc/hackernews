@@ -2,16 +2,27 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="2dp"
-    android:background="@drawable/item_highlight"
+    android:elevation="5dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginTop="5dp"
+    android:background="@color/background_material_dark"
     android:orientation="horizontal" >
 
-    <Button
+    <TextView
         android:id="@+id/openBtn"
         android:layout_width="wrap_content"
-        android:text="Open"
+        android:text=">"
+        android:textStyle="bold"
+        android:textSize="20sp"
         android:layout_alignParentRight="true"
         android:focusable="false"
+        android:layout_alignTop="@+id/title"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:background="@color/bg_dark"
+        android:layout_alignBottom="@+id/info"
         android:layout_height="wrap_content" />
 
     <TextView
@@ -19,7 +30,7 @@
         android:layout_toLeftOf="@id/openBtn"
         android:text="Title"
         android:maxLines="2"
-        android:padding="3dp"
+        android:padding="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -27,9 +38,10 @@
         android:id="@+id/info"
         android:layout_toLeftOf="@id/openBtn"
         android:text="info"
-        android:padding="3dp"
+        android:padding="5dp"
         android:textSize="10sp"
         android:maxLines="2"
+        android:textColor="@color/text_dark"
         android:layout_below="@id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

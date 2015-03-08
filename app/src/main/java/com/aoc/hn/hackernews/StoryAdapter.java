@@ -83,14 +83,14 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.MyViewHolder
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView title = null;
         public TextView info = null;
-        public Button openBtn = null;
+        public TextView openBtn = null;
 
         public MyViewHolder(final View rowView) {
             super(rowView);
 
             title = (TextView) rowView.findViewById(R.id.title);
             info = (TextView) rowView.findViewById(R.id.info);
-            openBtn = (Button) rowView.findViewById(R.id.openBtn);
+            openBtn = (TextView) rowView.findViewById(R.id.openBtn);
 
             rowView.setOnClickListener(this);
 /*

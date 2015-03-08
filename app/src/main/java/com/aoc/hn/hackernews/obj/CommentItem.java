@@ -2,6 +2,8 @@ package com.aoc.hn.hackernews.obj;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class CommentItem {
 	@SerializedName("id")
 	public long id = -1;
@@ -14,4 +16,17 @@ public class CommentItem {
 	
 	@SerializedName("time")
 	public long time = -1;
+
+    @SerializedName("kids")
+    public List<String> kids = null;
+
+    public String latestReply = "";
+
+    public void setLatestReply() {
+        if(kids == null || kids.size() < 1) {
+            return;
+        }
+        latestReply = kids.get(0);
+        kids.clear();
+    }
 }

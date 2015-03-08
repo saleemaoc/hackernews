@@ -44,8 +44,6 @@ public class CommentsFragment extends Fragment {
             mRecyclerView.setAdapter(mAdapter);
             LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(mLayoutManager);
-            RecyclerView.ItemDecoration itemDecoration = new CustomItemDecoration(getActivity());
-            mRecyclerView.addItemDecoration(itemDecoration);
             mRecyclerView.setItemAnimator(new ScaleInOutItemAnimator(mRecyclerView));
         }
 

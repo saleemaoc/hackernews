@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="5dp"
+    android:elevation="5dp"
+    android:layout_margin="5dp"
+    android:background="@drawable/view_background"
     android:orientation="horizontal" >
 
 	<TextView
@@ -18,6 +21,26 @@
         android:layout_below="@id/info"
         android:text="Title"
         android:padding="3dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/replyInfo"
+        android:layout_marginTop="6dp"
+        android:layout_below="@id/content"
+        android:text="Reply Info"
+        android:maxLines="2"
+        android:padding="3dp"
+        android:textSize="10sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/replyContent"
+        android:layout_below="@id/replyInfo"
+        android:text="Reply"
+        android:padding="3dp"
+        android:textSize="10sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

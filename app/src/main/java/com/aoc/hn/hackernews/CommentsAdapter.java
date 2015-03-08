@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aoc.hn.hackernews.obj.CommentItem;
 
@@ -48,30 +49,21 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         return mComments.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnTouchListener{
+    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView content = null;
         public TextView info = null;
 
         public MyViewHolder(View rowView) {
             super(rowView);
 
-//            rowView.setOnTouchListener(this);
-
+            rowView.setOnClickListener(this);
             content = (TextView) rowView.findViewById(R.id.content);
             info = (TextView) rowView.findViewById(R.id.info);
         }
 
         @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                view.setTag(((PaintDrawable) view.getBackground()).getPaint().getColor());
-                view.setBackgroundColor(Color.CYAN);
-                return true;
-            } else if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                view.setBackgroundColor((Integer) view.getTag());
-                return true;
-            }
-            return false;
+        public void onClick(View view) {
+            Toast.makeText(mContext, mComments.get(getPosition()).latestReply, Toast.LENGTH_SHORT).show();
         }
     }
 }
