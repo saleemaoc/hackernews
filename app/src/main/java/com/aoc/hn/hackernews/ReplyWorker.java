@@ -1,6 +1,7 @@
 package com.aoc.hn.hackernews;
 
 import android.os.AsyncTask;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -85,7 +86,7 @@ public class ReplyWorker extends AsyncTask<String, Integer, CommentReplyItem> {
         commentItem.latestReply = replyItem.content;
         replyContent.setVisibility(View.VISIBLE);
         replyInfo.setVisibility(View.VISIBLE);
-        replyContent.setText(replyItem.content);
+        replyContent.setText(Html.fromHtml(replyItem.content + ""));
         replyInfo.setText("Posted by " + replyItem.author + " " + Utils.durationFromUnixTime(replyItem.time));
     }
 	

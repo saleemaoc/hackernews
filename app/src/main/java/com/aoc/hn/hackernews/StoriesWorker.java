@@ -23,13 +23,13 @@ import java.util.List;
 
 public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
 
-	List<String> stories = null;
+//	List<String> stories = null;
     List<String> totalStories = null;
 	StoryFragment storiesFragment = null;
 	private boolean mCancel = false;
 
 	public StoriesWorker(StoryFragment f) {
-		this.stories = new ArrayList<String>();
+//		this.stories = new ArrayList<String>();
         this.totalStories = new ArrayList<String>();
 		this.storiesFragment = f;
 	}
@@ -81,19 +81,26 @@ public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
 			// failed to get the json data
 			storiesFragment.noStoriesFound();
             storiesFragment.hideProgressBar();
-			stories = null;
 			return;
 		}
 		// TODO
-        loadMore(10);
+        loadMore(0, 10);
     }
 
-    public void loadMore(int end) {
-        stories = totalStories.subList(0, end);
-        for (String id: stories) {
+    public void loadMore(int start, int end) {
+        if(end >= totalStories.size()) {
+            end = totalStories.size() - 1;
+        }
+        if(start >= end) {
+            log("returning");
+            return;
+        }
+        for (int i = start; i <= end; i++) {
+            String id = totalStories.get(i);
             try {
                 StoryItem si = StoryORM.findById(storiesFragment.getActivity(), Long.parseLong(id));
                 if(si != null) {
+                    StoryORM.insert(storiesFragment.getActivity(), si);
                     storiesFragment.addStoryItem(si);
                     continue;
                 }

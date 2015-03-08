@@ -32,6 +32,7 @@ public class StoryFragment extends Fragment {
     ProgressBar progressBar = null;
     RecyclerView mRecyclerView = null;
     SwipeRefreshLayout mSwipeLayout = null;
+    StoriesWorker mStoriesWorker = null;
 
     private int previousTotal = 0;
     private boolean loading = true;
@@ -71,6 +72,7 @@ public class StoryFragment extends Fragment {
                     if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
                         // Do something
                         log("scroll");
+                        mStoriesWorker.loadMore(currentPage * itemsPerPage, ++currentPage * itemsPerPage);
                         loading = true;
                     }
                 }
@@ -88,6 +90,9 @@ public class StoryFragment extends Fragment {
         });
     }
 
+    int itemsPerPage = 10;
+    public int currentPage = 1;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stories_list, container, false);
@@ -100,7 +105,6 @@ public class StoryFragment extends Fragment {
     public void addStoryItem(StoryItem sItem) {
 //        log("adding story item");
         mSwipeLayout.setRefreshing(false);
-        StoryORM.insert(getActivity(), sItem);
         mStories.add(sItem);
         mAdapter.notifyItemInserted(mStories.size());
     }
@@ -116,7 +120,7 @@ public class StoryFragment extends Fragment {
         if(mStories.size() <= 0) {
             new Handler().postDelayed(refreshIndicator, 600);
         }
-        StoriesWorker mStoriesWorker = new StoriesWorker(StoryFragment.this);
+        mStoriesWorker = new StoriesWorker(StoryFragment.this);
         mStoriesWorker.execute(ListActivity.URL_TOP_STORIES);
     }
 
