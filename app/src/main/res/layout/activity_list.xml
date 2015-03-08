@@ -6,5 +6,18 @@
     tools:context="hn.aoc.com.hackernews.ListActivity"
     tools:ignore="MergeRootFrame" >
 
+    <fragment
+        android:id="@+id/stories_fragment"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        class="com.aoc.hn.hackernews.StoryFragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/comments_fragment"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        class="com.aoc.hn.hackernews.CommentsFragment">
+    </fragment>
 
 </FrameLayout>

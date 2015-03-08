@@ -2,9 +2,12 @@ package com.aoc.hn.hackernews;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.PaintDrawable;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -77,12 +80,12 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.MyViewHolder
         return this.mStories.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView title = null;
         public TextView info = null;
         public Button openBtn = null;
 
-        public MyViewHolder(View rowView) {
+        public MyViewHolder(final View rowView) {
             super(rowView);
 
             title = (TextView) rowView.findViewById(R.id.title);
@@ -90,6 +93,22 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.MyViewHolder
             openBtn = (Button) rowView.findViewById(R.id.openBtn);
 
             rowView.setOnClickListener(this);
+/*
+            rowView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent motionEvent) {
+                    if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+//                        rowView.setTag(((PaintDrawable) rowView.getBackground()).getPaint().getColor());
+                        rowView.setBackgroundColor(Color.CYAN);
+                        return true;
+                    } else if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                        rowView.setBackgroundColor(Color.BLUE);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+*/
 
             openBtn.setOnClickListener(new View.OnClickListener() {
                 @Override

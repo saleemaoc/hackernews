@@ -26,10 +26,17 @@ public class ListActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_list);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		if (savedInstanceState == null) {
-			mStoriesFragment = new StoryFragment();
-            mCommentsFragment = new CommentsFragment();
-			transaction.add(R.id.container, mStoriesFragment).commit();
+			// mStoriesFragment = new StoryFragment();
+            // mCommentsFragment = new CommentsFragment();
+			//transaction.add(R.id.container, mStoriesFragment).commit();
 		}
+        if(mStoriesFragment == null) {
+            mStoriesFragment = (StoryFragment) getSupportFragmentManager().findFragmentById(R.id.stories_fragment);
+        }
+        if(mCommentsFragment == null) {
+            mCommentsFragment = (CommentsFragment) getSupportFragmentManager().findFragmentById(R.id.comments_fragment);
+        }
+        getSupportFragmentManager().beginTransaction().hide(mCommentsFragment).commit();
 		mStoriesWorker = new StoriesWorker(mStoriesFragment);
 		mStoriesWorker.execute(URL_TOP_STORIES);
 	}
@@ -59,19 +66,21 @@ public class ListActivity extends ActionBarActivity {
 
     public void showStoriesFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, mStoriesFragment);
-        transaction.commit();
+        transaction.show(mStoriesFragment).hide(mCommentsFragment).commit();
     }
 
     @Override
     public void onBackPressed() {
-        // TODO fix fragment navigation
+        if(!mStoriesFragment.isVisible()) {
+            showStoriesFragment();
+            return;
+        }
         super.onBackPressed();
     }
 
     public void showCommentsFragment(List<String> commentIDs) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, mCommentsFragment);
+        transaction.show(mCommentsFragment).hide(mStoriesFragment);
 //        transaction.addToBackStack(null);
         transaction.commit();
 

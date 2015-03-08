@@ -60,7 +60,7 @@ public class CommentsFragment extends Fragment {
     }
 
     public void addCommentItem(CommentItem co) {
-        log("adding comment item");
+//        log("adding comment item");
         mComments.add(co);
         mAdapter.notifyItemInserted(mComments.size());
     }
