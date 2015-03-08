@@ -19,11 +19,17 @@ android {
     }
 }
 
+/*
+repositories {
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+*/
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     //compile 'com.android.support:appcompat-v7:19.+'
     compile 'com.google.code.gson:gson:2.2.+'
     compile 'com.android.support:appcompat-v7:21.0.+'
-    compile 'com.android.support:cardview-v7:21.0.+'
     compile 'com.android.support:recyclerview-v7:21.0.+'
+    // compile 'com.github.gabrielemariotti.recyclerview:recyclerview-animators:0.1.0-SNAPSHOT@aar'
 }

@@ -2,7 +2,10 @@ package com.aoc.hn.hackernews;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,14 +19,17 @@ import com.aoc.hn.hackernews.obj.CommentItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.gmariotti.recyclerview.itemanimator.ScaleInOutItemAnimator;
+
 /**
  * Created by aoc on 3/7/15.
  */
-public class CommentsFragment extends ListFragment {
+public class CommentsFragment extends Fragment {
 
     List<CommentItem> mComments = null;
     CommentsAdapter mAdapter = null;
     ProgressBar progressBar = null;
+    RecyclerView mRecyclerView = null;
 
     public CommentsFragment() {
     }
@@ -34,26 +40,29 @@ public class CommentsFragment extends ListFragment {
 
         mComments = new ArrayList<CommentItem>();
         mAdapter = new CommentsAdapter(getActivity(), mComments);
-        setListAdapter(mAdapter);
-    }
+        if(mRecyclerView != null) {
+            mRecyclerView.setAdapter(mAdapter);
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+            mRecyclerView.setLayoutManager(mLayoutManager);
+            RecyclerView.ItemDecoration itemDecoration = new CustomItemDecoration(getActivity());
+            mRecyclerView.addItemDecoration(itemDecoration);
+            mRecyclerView.setItemAnimator(new ScaleInOutItemAnimator(mRecyclerView));
+        }
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-        Toast.makeText(getActivity(), mComments.get(position).author, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_comments_list, container, false);
         progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.comments_list_view);
         return rootView;
     }
 
     public void addCommentItem(CommentItem co) {
         log("adding comment item");
         mComments.add(co);
-        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyItemInserted(mComments.size());
     }
 
     public void clear() {

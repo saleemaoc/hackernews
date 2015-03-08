@@ -1,6 +1,7 @@
 package com.aoc.hn.hackernews;
 
 import android.app.Activity;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,49 +16,43 @@ import java.util.List;
 /**
  * Created by aoc on 3/7/15.
  */
-public class CommentsAdapter extends ArrayAdapter<CommentItem> {
+public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyViewHolder> {
     private Activity mContext = null;
     private List<CommentItem> mComments = null;
 
     public CommentsAdapter(Activity context, List<CommentItem> stories) {
-        super(context, R.layout.comment_list_item);
+        super();
         this.mContext = context;
         this.mComments = stories;
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        View rowView = convertView;
-        // reuse row view, if possible
-        if (rowView == null) {
-            LayoutInflater inflater = mContext.getLayoutInflater();
-            rowView = inflater.inflate(R.layout.comment_list_item, parent, false);
-            ViewHolder viewHolder = new ViewHolder();
-            viewHolder.content = (TextView) rowView.findViewById(R.id.content);
-            viewHolder.info = (TextView) rowView.findViewById(R.id.info);
-            rowView.setTag(viewHolder);
-        }
-        // set title and image url
-        final ViewHolder holder = (ViewHolder) rowView.getTag();
-        // TODO
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int i) {
+        View rowView = LayoutInflater.from(mContext).inflate(R.layout.comment_list_item, parent, false);
+        MyViewHolder viewHolder = new MyViewHolder(rowView);
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(MyViewHolder holder, int position) {
         CommentItem ci = mComments.get(position);
         holder.content.setText(Html.fromHtml(ci.content));
-        holder.info.setText(" by " + ci.author + "  " + Utils.durationFromUnixTime(ci.time));
-        return rowView;
+        holder.info.setText(" Posted by " + ci.author + " " + Utils.durationFromUnixTime(ci.time));
     }
 
     @Override
-    public int getCount() {
-        return this.mComments.size();
+    public int getItemCount() {
+        return mComments.size();
     }
 
-    @Override
-    public CommentItem getItem(int position) {
-        return this.mComments.get(position);
-    }
-
-    class ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder{
         public TextView content = null;
         public TextView info = null;
+
+        public MyViewHolder(View rowView) {
+            super(rowView);
+            content = (TextView) rowView.findViewById(R.id.content);
+            info = (TextView) rowView.findViewById(R.id.info);
+        }
     }
 }
