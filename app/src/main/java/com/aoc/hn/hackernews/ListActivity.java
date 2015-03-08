@@ -37,9 +37,11 @@ public class ListActivity extends ActionBarActivity {
             mCommentsFragment = (CommentsFragment) getSupportFragmentManager().findFragmentById(R.id.comments_fragment);
         }
         getSupportFragmentManager().beginTransaction().hide(mCommentsFragment).commit();
+/*
 		mStoriesWorker = new StoriesWorker(mStoriesFragment);
 		mStoriesWorker.execute(URL_TOP_STORIES);
-	}
+*/
+    }
 
     public CommentsFragment getCommentsFragment() {
         return mCommentsFragment;
@@ -84,9 +86,7 @@ public class ListActivity extends ActionBarActivity {
 //        transaction.addToBackStack(null);
         transaction.commit();
 
-        mCommentsFragment.clear();
-        CommentsWorker mCommentsWorker = new CommentsWorker(mCommentsFragment);
-        mCommentsWorker.fetchComments(commentIDs);
+        mCommentsFragment.fetchComments(commentIDs);
     }
 
     /**
@@ -95,7 +95,7 @@ public class ListActivity extends ActionBarActivity {
 	@Override
 	public void finish() {
 		super.finish();
-		mStoriesWorker.cancel();
+//		mStoriesWorker.cancel();
 	}
 	
 	public void log(String msg){

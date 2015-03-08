@@ -31,35 +31,6 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.MyViewHolder
         this.mStories = stories;
     }
 
-/*    @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        View rowView = convertView;
-        // reuse row view, if possible
-        if (rowView == null) {
-            LayoutInflater inflater = mContext.getLayoutInflater();
-            rowView = inflater.inflate(R.layout.story_list_item, parent, false);
-            ViewHolder viewHolder = new ViewHolder();
-            viewHolder.title = (TextView) rowView.findViewById(R.id.title);
-            viewHolder.info = (TextView) rowView.findViewById(R.id.info);
-            viewHolder.openBtn = (Button) rowView.findViewById(R.id.openBtn);
-            rowView.setTag(viewHolder);
-        }
-        final ViewHolder holder = (ViewHolder) rowView.getTag();
-        final StoryItem si = mStories.get(position);
-        holder.title.setText(si.title);
-        String infoStr = si.points + " points by " + si.author + "  " + Utils.durationFromUnixTime(si.time);
-        holder.info.setText(infoStr);
-        holder.openBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(mStories.get(position).url));
-                mContext.startActivity(i);
-            }
-        });
-        return rowView;
-    }*/
-
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.story_list_item, parent, false);
@@ -93,22 +64,6 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.MyViewHolder
             openBtn = (TextView) rowView.findViewById(R.id.openBtn);
 
             rowView.setOnClickListener(this);
-/*
-            rowView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent motionEvent) {
-                    if(motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-//                        rowView.setTag(((PaintDrawable) rowView.getBackground()).getPaint().getColor());
-                        rowView.setBackgroundColor(Color.CYAN);
-                        return true;
-                    } else if(motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                        rowView.setBackgroundColor(Color.BLUE);
-                        return true;
-                    }
-                    return false;
-                }
-            });
-*/
 
             openBtn.setOnClickListener(new View.OnClickListener() {
                 @Override

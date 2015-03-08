@@ -1,9 +1,11 @@
 package com.aoc.hn.hackernews;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -30,6 +32,8 @@ public class CommentsFragment extends Fragment {
     CommentsAdapter mAdapter = null;
     ProgressBar progressBar = null;
     RecyclerView mRecyclerView = null;
+    SwipeRefreshLayout mSwipeLayout = null;
+    List<String> commentIDs = null;
 
     public CommentsFragment() {
     }
@@ -46,6 +50,14 @@ public class CommentsFragment extends Fragment {
             mRecyclerView.setLayoutManager(mLayoutManager);
             mRecyclerView.setItemAnimator(new ScaleInOutItemAnimator(mRecyclerView));
         }
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mComments.clear();
+                mAdapter.notifyDataSetChanged();
+                fetchComments(commentIDs);
+            }
+        });
 
     }
 
@@ -54,7 +66,26 @@ public class CommentsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_comments_list, container, false);
         progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.comments_list_view);
+        mSwipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeLayout);
         return rootView;
+    }
+
+    public void fetchComments(List<String> commentIDs) {
+        if(commentIDs == null) {
+            return;
+        }
+        this.commentIDs = commentIDs;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeLayout.setRefreshing(true);
+            }
+        }, 1000);
+
+        clear();
+        CommentsWorker mCommentsWorker = new CommentsWorker(this);
+        mCommentsWorker.fetchComments(commentIDs);
+
     }
 
     public void addCommentItem(CommentItem co) {
@@ -71,6 +102,7 @@ public class CommentsFragment extends Fragment {
         mAdapter.notifyDataSetChanged();
     }
     public void hideProgressBar() {
+        mSwipeLayout.setRefreshing(false);
         if(progressBar != null)
            progressBar.setVisibility(View.GONE);
     }

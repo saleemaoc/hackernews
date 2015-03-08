@@ -1,8 +1,10 @@
 package com.aoc.hn.hackernews;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -28,6 +30,7 @@ public class StoryFragment extends Fragment {
     StoryAdapter mAdapter = null;
     ProgressBar progressBar = null;
     RecyclerView mRecyclerView = null;
+    SwipeRefreshLayout mSwipeLayout = null;
 
     public StoryFragment() {
     }
@@ -42,26 +45,26 @@ public class StoryFragment extends Fragment {
             mRecyclerView.setAdapter(mAdapter);
             LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(mLayoutManager);
-//            RecyclerView.ItemDecoration itemDecoration = new CustomItemDecoration(getActivity());
-//            mRecyclerView.addItemDecoration(itemDecoration);
             mRecyclerView.setItemAnimator(new ScaleInOutItemAnimator(mRecyclerView));
         }
-    }
 
-/*
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-//        Toast.makeText(getActivity(), mStories.get(position).comments + " comments", Toast.LENGTH_SHORT).show();
-        ((ListActivity) getActivity()).showCommentsFragment(mStories.get(position).comments);
+        fetchStories();
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mStories.clear();
+                mAdapter.notifyDataSetChanged();
+                fetchStories();
+            }
+        });
     }
-*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stories_list, container, false);
         progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.stories_list_view);
+        mSwipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeLayout);
         return rootView;
     }
 
@@ -71,7 +74,19 @@ public class StoryFragment extends Fragment {
         mAdapter.notifyItemInserted(mStories.size());
     }
 
+    public void fetchStories() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeLayout.setRefreshing(true);
+            }
+        }, 1000);
+        StoriesWorker mStoriesWorker = new StoriesWorker(StoryFragment.this);
+        mStoriesWorker.execute(ListActivity.URL_TOP_STORIES);
+    }
+
     public void hideProgressBar() {
+        mSwipeLayout.setRefreshing(false);
         if(progressBar != null)
            progressBar.setVisibility(View.GONE);
     }
