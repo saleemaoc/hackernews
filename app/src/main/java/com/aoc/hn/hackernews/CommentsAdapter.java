@@ -45,6 +45,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         }
         if(ci.latestReplyId.length() > 0) {
             holder.progressBar.setVisibility(View.VISIBLE);
+            holder.replyInfo.setText("");
+            holder.replyContent.setText("");
             ReplyWorker rw = new ReplyWorker(holder.replyContent, holder.replyInfo, holder.progressBar, ci);
             rw.execute(ListActivity.URL_ITEM_DETAILS + ci.latestReplyId + ".json");
         }
@@ -70,6 +72,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
             info = (TextView) rowView.findViewById(R.id.info);
             replyInfo = (TextView) rowView.findViewById(R.id.replyInfo);
             replyContent = (TextView) rowView.findViewById(R.id.replyContent);
+        }
+
+        public void makeInvisible() {
+            this.progressBar.setVisibility(View.GONE);
+            this.info.setVisibility(View.GONE);
+            this.content.setVisibility(View.GONE);
+            this.replyContent.setVisibility(View.GONE);
+            this.replyInfo.setVisibility(View.GONE);
         }
 
         @Override

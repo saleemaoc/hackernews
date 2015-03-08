@@ -19,6 +19,8 @@ import android.widget.Toast;
 import com.aoc.hn.hackernews.obj.CommentItem;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import it.gmariotti.recyclerview.itemanimator.ScaleInOutItemAnimator;
@@ -34,6 +36,7 @@ public class CommentsFragment extends Fragment {
     RecyclerView mRecyclerView = null;
     SwipeRefreshLayout mSwipeLayout = null;
     List<String> commentIDs = null;
+    CommentsWorker mCommentsWorker = null;
 
     public CommentsFragment() {
     }
@@ -70,28 +73,51 @@ public class CommentsFragment extends Fragment {
         return rootView;
     }
 
+    Runnable refreshIndicator = new Runnable() {
+        @Override
+        public void run() {
+            mSwipeLayout.setRefreshing(true);
+        }
+    };
+
     public void fetchComments(List<String> commentIDs) {
+        log("Fetching comments");
         if(commentIDs == null) {
             return;
         }
         this.commentIDs = commentIDs;
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeLayout.setRefreshing(true);
-            }
-        }, 1000);
+        if(mComments.size() <= 0) {
+            new Handler().postDelayed(refreshIndicator, 600);
+        }
 
         clear();
-        CommentsWorker mCommentsWorker = new CommentsWorker(this);
+        mCommentsWorker = new CommentsWorker(this);
         mCommentsWorker.fetchComments(commentIDs);
 
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(hidden && mCommentsWorker != null){
+            mCommentsWorker.cancel();
+            mComments.clear();
+        }
+    }
+
     public void addCommentItem(CommentItem co) {
 //        log("adding comment item");
+        if(co.content == null) {
+            return;
+        }
         mComments.add(co);
-        mAdapter.notifyItemInserted(mComments.size());
+        Collections.sort(mComments, new Comparator<CommentItem>(){
+            @Override
+            public int compare(CommentItem commentItem, CommentItem commentItem2) {
+                return (int) (commentItem2.time - commentItem.time);
+            }
+        });
+        mAdapter.notifyDataSetChanged();
     }
 
     public void clear() {

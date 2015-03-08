@@ -3,6 +3,7 @@ package com.aoc.hn.hackernews;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.aoc.hn.hackernews.db.StoryORM;
 import com.aoc.hn.hackernews.obj.StoryItem;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,11 +24,13 @@ import java.util.List;
 public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
 
 	List<String> stories = null;
+    List<String> totalStories = null;
 	StoryFragment storiesFragment = null;
 	private boolean mCancel = false;
 
 	public StoriesWorker(StoryFragment f) {
 		this.stories = new ArrayList<String>();
+        this.totalStories = new ArrayList<String>();
 		this.storiesFragment = f;
 	}
 
@@ -50,7 +53,7 @@ public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
 	        final GsonBuilder gsonBuilder = new GsonBuilder();
 	        final Gson gson = gsonBuilder.create();
 	        while (jsonReader.hasNext()) {
-	        	stories.add((String) gson.fromJson(jsonReader, String.class));
+	        	totalStories.add((String) gson.fromJson(jsonReader, String.class));
 //	        	log(stories.toString());
 	        }
 	        jsonReader.endArray();
@@ -82,20 +85,25 @@ public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
 			return;
 		}
 		// TODO
-/*
-		for (String id : stories) {
+        loadMore(10);
+    }
+
+    public void loadMore(int end) {
+        stories = totalStories.subList(0, end);
+        for (String id: stories) {
+            try {
+                StoryItem si = StoryORM.findById(storiesFragment.getActivity(), Long.parseLong(id));
+                if(si != null) {
+                    storiesFragment.addStoryItem(si);
+                    continue;
+                }
+            } catch (Exception e) {
+            }
             StoryItemWorker cw = new StoryItemWorker();
             cw.execute(ListActivity.URL_ITEM_DETAILS + id + ".json");
-		}
-*/
-
-        StoryItemWorker cw = new StoryItemWorker();
-        cw.execute(ListActivity.URL_ITEM_DETAILS + stories.get(0) + ".json");
-        StoryItemWorker cw2 = new StoryItemWorker();
-        cw2.execute(ListActivity.URL_ITEM_DETAILS + stories.get(1) + ".json");
-
+        }
     }
-	
+
 	public void log(String msg){
 		Log.e(getClass().getName(), msg);
 	}
@@ -142,7 +150,6 @@ public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
 		@Override
 		protected void onPostExecute(StoryItem storyItem) {
 			super.onPostExecute(storyItem);
-			storiesFragment.hideProgressBar();
 			if(storyItem == null) {
 				// failed to retrieve the story item
 				return;

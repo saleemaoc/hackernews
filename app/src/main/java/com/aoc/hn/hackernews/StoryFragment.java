@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.aoc.hn.hackernews.db.StoryORM;
 import com.aoc.hn.hackernews.obj.StoryItem;
 
 import java.util.ArrayList;
@@ -32,6 +33,11 @@ public class StoryFragment extends Fragment {
     RecyclerView mRecyclerView = null;
     SwipeRefreshLayout mSwipeLayout = null;
 
+    private int previousTotal = 0;
+    private boolean loading = true;
+    private int visibleThreshold = 5;
+    int firstVisibleItem, visibleItemCount, totalItemCount;
+
     public StoryFragment() {
     }
 
@@ -43,9 +49,32 @@ public class StoryFragment extends Fragment {
         mAdapter = new StoryAdapter(getActivity(), mStories);
         if(mRecyclerView != null) {
             mRecyclerView.setAdapter(mAdapter);
-            LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+            final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(mLayoutManager);
             mRecyclerView.setItemAnimator(new ScaleInOutItemAnimator(mRecyclerView));
+            mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+
+                    visibleItemCount = mRecyclerView.getChildCount();
+                    totalItemCount = mLayoutManager.getItemCount();
+                    firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+
+                    if (loading) {
+                        if (totalItemCount > previousTotal) {
+                            loading = false;
+                            previousTotal = totalItemCount;
+                        }
+                    }
+                    if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+                        // Do something
+                        log("scroll");
+                        loading = true;
+                    }
+                }
+            });
         }
 
         fetchStories();
@@ -70,17 +99,23 @@ public class StoryFragment extends Fragment {
 
     public void addStoryItem(StoryItem sItem) {
 //        log("adding story item");
+        mSwipeLayout.setRefreshing(false);
+        StoryORM.insert(getActivity(), sItem);
         mStories.add(sItem);
         mAdapter.notifyItemInserted(mStories.size());
     }
 
+    Runnable refreshIndicator = new Runnable() {
+        @Override
+        public void run() {
+            mSwipeLayout.setRefreshing(true);
+        }
+    };
+
     public void fetchStories() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeLayout.setRefreshing(true);
-            }
-        }, 1000);
+        if(mStories.size() <= 0) {
+            new Handler().postDelayed(refreshIndicator, 600);
+        }
         StoriesWorker mStoriesWorker = new StoriesWorker(StoryFragment.this);
         mStoriesWorker.execute(ListActivity.URL_TOP_STORIES);
     }
