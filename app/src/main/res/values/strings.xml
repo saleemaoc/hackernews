@@ -8,7 +8,7 @@
     <color name="primary_color">#303030</color>
     <color name="primary_color_light">#44ffbb33</color>
     <color name="text_normal">#ffffff</color>
-    <color name="text_dark">#757575</color>
+    <color name="text_dark">#ffc2c2c2</color>
     <color name="bg_dark">#c000</color>
 
 </resources>
