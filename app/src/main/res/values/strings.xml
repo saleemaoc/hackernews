@@ -11,7 +11,7 @@
 
     <color name="color_content_bg">#558B2F</color>
     <color name="color_content_bg_light">#ff888888</color>
-    <color name="color_text_normal">#ffffff</color>
+    <color name="color_foreground">#ffffff</color>
     <color name="color_text_dark">#ffc2c2c2</color>
     <color name="color_text_hyperlink">#e494aaff</color>
     <color name="color_divider">#3000</color>

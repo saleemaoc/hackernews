@@ -1,5 +1,6 @@
 package com.aoc.hn.hackernews;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -60,13 +61,15 @@ public class CommentsFragment extends Fragment {
 
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_comments_list, container, false);
         progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.comments_list_view);
         mSwipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeLayout);
-        mSwipeLayout.setColorSchemeColors(getResources().getColor(R.color.color_primary));
+        mSwipeLayout.setColorSchemeColors(getResources().getColor(R.color.color_foreground));
+        mSwipeLayout.setProgressBackgroundColor(R.color.color_accent);
         return rootView;
     }
 

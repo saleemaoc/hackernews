@@ -2,8 +2,8 @@
 
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="actionBarStyle">@style/MyActionBar</item>
-        <item name="actionMenuTextColor">@color/color_text_normal</item>
-        <item name="android:textColor">@color/color_text_normal</item>
+        <item name="actionMenuTextColor">@color/color_foreground</item>
+        <item name="android:textColor">@color/color_foreground</item>
     </style>
 
     <!-- Base application theme. -->
@@ -19,7 +19,7 @@
 
     <style name="MyActionBarTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <!-- title text color -->
-        <item name="android:textColor">@color/color_text_normal</item>
+        <item name="android:textColor">@color/color_foreground</item>
     </style>
 
 </resources>

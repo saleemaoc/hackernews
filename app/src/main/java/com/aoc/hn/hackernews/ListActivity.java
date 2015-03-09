@@ -37,10 +37,6 @@ public class ListActivity extends ActionBarActivity {
             mCommentsFragment = (CommentsFragment) getSupportFragmentManager().findFragmentById(R.id.comments_fragment);
         }
         getSupportFragmentManager().beginTransaction().hide(mCommentsFragment).commit();
-/*
-		mStoriesWorker = new StoriesWorker(mStoriesFragment);
-		mStoriesWorker.execute(URL_TOP_STORIES);
-*/
     }
 
     public CommentsFragment getCommentsFragment() {
