@@ -149,6 +149,9 @@ public class CommentsFragment extends Fragment {
     }
 
     public void log(String msg){
+        if(Constants.DEBUG == false) {
+            return;
+        }
         Log.e(getClass().getName(), msg + "");
     }
 

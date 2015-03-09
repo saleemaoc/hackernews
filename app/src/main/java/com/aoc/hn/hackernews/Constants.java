@@ -5,6 +5,7 @@ package com.aoc.hn.hackernews;
  */
 public class Constants {
 
+    public static boolean DEBUG = false;
     public static String PREFS_FILE_NAME = "hackernews.prefs";
     public static String STORIES_IDs = "stories_ids";
 

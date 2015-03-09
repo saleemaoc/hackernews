@@ -63,7 +63,10 @@ public class CommentsWorker {
     }
 
 	public void log(String msg){
-		Log.e(getClass().getName(), msg + "");
+        if(Constants.DEBUG == false) {
+            return;
+        }
+        Log.e(getClass().getName(), msg + "");
 	}
 
     /**

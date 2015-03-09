@@ -167,7 +167,10 @@ public class StoryWorker extends AsyncTask<String, Integer, Boolean>{
     }
 
     public void log(String msg){
-		Log.e(getClass().getName(), msg);
+        if(Constants.DEBUG == false) {
+            return;
+        }
+        Log.e(getClass().getName(), msg);
 	}
 	
 	public void cancel() {

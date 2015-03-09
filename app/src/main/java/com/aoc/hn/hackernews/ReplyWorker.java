@@ -46,7 +46,10 @@ public class ReplyWorker extends AsyncTask<String, Integer, CommentReplyItem> {
     }
 
 	public void log(String msg){
-		Log.e(getClass().getName(), msg + "");
+        if(Constants.DEBUG == false) {
+            return;
+        }
+        Log.e(getClass().getName(), msg + "");
 	}
 	
 	public void cancel() {
