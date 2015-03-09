@@ -1,4 +1,4 @@
-package com.aoc.hn.hackernews.obj;
+package com.aoc.hn.hackernews.models;
 
 import com.google.gson.annotations.SerializedName;
 

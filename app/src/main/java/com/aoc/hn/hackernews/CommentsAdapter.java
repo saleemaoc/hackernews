@@ -8,9 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.aoc.hn.hackernews.obj.CommentItem;
+import com.aoc.hn.hackernews.models.CommentItem;
 
 import java.util.List;
 
@@ -84,7 +83,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(mContext, mComments.get(getPosition()).latestReplyId, Toast.LENGTH_SHORT).show();
+            // Toast.makeText(mContext, mComments.get(getPosition()).latestReplyId, Toast.LENGTH_SHORT).show();
         }
     }
 }

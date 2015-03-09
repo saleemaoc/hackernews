@@ -7,8 +7,12 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.aoc.hn.hackernews.obj.CommentItem;
-import com.aoc.hn.hackernews.obj.CommentReplyItem;
+import com.aoc.hn.hackernews.db.CommentORM;
+import com.aoc.hn.hackernews.db.ReplyORM;
+import com.aoc.hn.hackernews.db.StoryORM;
+import com.aoc.hn.hackernews.models.CommentItem;
+import com.aoc.hn.hackernews.models.CommentReplyItem;
+import com.aoc.hn.hackernews.models.StoryItem;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -19,7 +23,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 public class ReplyWorker extends AsyncTask<String, Integer, CommentReplyItem> {
 
@@ -48,7 +51,13 @@ public class ReplyWorker extends AsyncTask<String, Integer, CommentReplyItem> {
         if(mCancel) {
             return null;
         }
-        log("requesting " + params[0]);
+        try {
+            CommentReplyItem si = ReplyORM.findById(replyContent.getContext(), Long.parseLong(commentItem.latestReplyId));
+            if(si != null) {
+                return si;
+            }
+        } catch (Exception e) {}
+        // log("requesting " + params[0]);
         StringBuilder sb = new StringBuilder();
         try {
             DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -83,6 +92,7 @@ public class ReplyWorker extends AsyncTask<String, Integer, CommentReplyItem> {
             // failed to retrieve the reply item
             return;
         }
+        ReplyORM.insert(progressBar.getContext(), replyItem);
         commentItem.latestReply = replyItem.content;
         replyContent.setVisibility(View.VISIBLE);
         replyInfo.setVisibility(View.VISIBLE);

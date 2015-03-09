@@ -1,10 +1,13 @@
+
+
+
 package com.aoc.hn.hackernews;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.aoc.hn.hackernews.db.StoryORM;
-import com.aoc.hn.hackernews.obj.StoryItem;
+import com.aoc.hn.hackernews.models.StoryItem;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
@@ -19,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
@@ -55,7 +59,6 @@ public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
 	        final Gson gson = gsonBuilder.create();
 	        while (jsonReader.hasNext()) {
 	        	totalStories.add((String) gson.fromJson(jsonReader, String.class));
-//	        	log(stories.toString());
 	        }
 	        jsonReader.endArray();
 	        jsonReader.close();
@@ -77,14 +80,32 @@ public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
 	@Override
 	protected void onPostExecute(Boolean result) {
 		super.onPostExecute(result);
-		log(result+ "");
+		// log(result + "");
 		if(!result) {
-			// failed to get the json data
-			storiesFragment.noStoriesFound();
+            // failed to get the json data
+            checkLocalStoryIDs();
+            return;
+        }
+        String ids = "";
+        for(String id: totalStories) {
+            ids += id + ":";
+        }
+        ids = ids.substring(0, ids.length() - 1);
+        storiesFragment.saveStoryIDs(ids);
+        loadMore(0, storiesFragment.visibleThreshold);
+    }
+
+    private void checkLocalStoryIDs() {
+        totalStories = null;
+        String s = storiesFragment.getStoryIDs();
+        if(s != null) {
+            totalStories = Arrays.asList(s.split(":"));
+        }
+        if(totalStories == null || totalStories.size() <= 0) {
+            storiesFragment.noStoriesFound();
             storiesFragment.hideProgressBar();
-			return;
-		}
-		// TODO
+            return;
+        }
         loadMore(0, storiesFragment.visibleThreshold);
     }
 
@@ -107,7 +128,6 @@ public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
                     continue;
                 }
             } catch (Exception e) {
-                continue;
             }
             StoryItemWorker cw = new StoryItemWorker();
             cw.execute(ListActivity.URL_ITEM_DETAILS + id + ".json");

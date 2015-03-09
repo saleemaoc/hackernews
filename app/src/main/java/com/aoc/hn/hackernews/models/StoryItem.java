@@ -1,5 +1,6 @@
-package com.aoc.hn.hackernews.obj;
+package com.aoc.hn.hackernews.models;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
@@ -30,10 +31,16 @@ public class StoryItem {
 	public List<String> comments = null;
 	
 	public void truncateComments() {
-		if(comments == null || comments.size() < MAX_COMMENTS) {
+		if(comments == null || comments.size() <= MAX_COMMENTS) {
 			return;
 		}
-		comments = comments.subList(0, 9);
+		comments = comments.subList(0, MAX_COMMENTS - 1);
+        Iterator<String> i = comments.iterator();
+        while(i.hasNext()) {
+            if (i.next().length() <= 0) {
+                i.remove();
+            }
+        }
 	}
 
 }

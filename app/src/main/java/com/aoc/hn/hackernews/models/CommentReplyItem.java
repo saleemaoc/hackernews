@@ -1,10 +1,13 @@
-package com.aoc.hn.hackernews.obj;
+package com.aoc.hn.hackernews.models;
 
 import com.google.gson.annotations.SerializedName;
 
 public class CommentReplyItem {
-	
-	@SerializedName("time")
+
+    @SerializedName("id")
+    public long id = -1;
+
+    @SerializedName("time")
 	public long time = -1;
 	
 	@SerializedName("by")

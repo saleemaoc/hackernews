@@ -83,10 +83,8 @@ public class ListActivity extends ActionBarActivity {
     public void showCommentsFragment(List<String> commentIDs) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.show(mCommentsFragment).hide(mStoriesFragment);
-//        transaction.addToBackStack(null);
         transaction.commit();
-
-        mCommentsFragment.fetchComments(commentIDs);
+        mCommentsFragment.fetchComments(commentIDs, false);
     }
 
     /**
@@ -95,7 +93,6 @@ public class ListActivity extends ActionBarActivity {
 	@Override
 	public void finish() {
 		super.finish();
-//		mStoriesWorker.cancel();
 	}
 	
 	public void log(String msg){

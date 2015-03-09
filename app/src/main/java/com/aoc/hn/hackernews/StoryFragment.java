@@ -1,5 +1,6 @@
 package com.aoc.hn.hackernews;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -14,8 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.aoc.hn.hackernews.db.StoryORM;
-import com.aoc.hn.hackernews.obj.StoryItem;
+import com.aoc.hn.hackernews.models.StoryItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,7 +110,6 @@ public class StoryFragment extends Fragment {
 //        log("adding story item");
         mSwipeLayout.setRefreshing(false);
         if(mStories.contains(sItem)) {
-            log("already exists");
             return;
         }
         mStories.add(sItem);
@@ -140,6 +139,17 @@ public class StoryFragment extends Fragment {
 
     public void noStoriesFound() {
         Toast.makeText(getActivity(), "No data found!", Toast.LENGTH_SHORT).show();
+
+    }
+
+    public boolean saveStoryIDs(String IDs) {
+        SharedPreferences sp = getActivity().getSharedPreferences(Constants.PREFS_FILE_NAME, getActivity().MODE_PRIVATE);
+        return sp.edit().putString(Constants.STORIES_IDs, IDs).commit();
+    }
+
+    public String getStoryIDs() {
+        SharedPreferences sp = getActivity().getSharedPreferences(Constants.PREFS_FILE_NAME, getActivity().MODE_PRIVATE);
+        return sp.getString(Constants.STORIES_IDs, null);
     }
 
     public void log(String msg){

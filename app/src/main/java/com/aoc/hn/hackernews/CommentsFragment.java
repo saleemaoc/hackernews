@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,15 +11,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.aoc.hn.hackernews.obj.CommentItem;
+import com.aoc.hn.hackernews.models.CommentItem;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import it.gmariotti.recyclerview.itemanimator.ScaleInOutItemAnimator;
@@ -58,7 +54,7 @@ public class CommentsFragment extends Fragment {
             public void onRefresh() {
                 mComments.clear();
                 mAdapter.notifyDataSetChanged();
-                fetchComments(commentIDs);
+                fetchComments(commentIDs, true);
             }
         });
 
@@ -73,27 +69,26 @@ public class CommentsFragment extends Fragment {
         return rootView;
     }
 
-    Runnable refreshIndicator = new Runnable() {
-        @Override
-        public void run() {
-            mSwipeLayout.setRefreshing(true);
-        }
-    };
-
-    public void fetchComments(List<String> commentIDs) {
+    public void fetchComments(final List<String> commentIDs, final boolean forceRefresh) {
         log("Fetching comments");
         if(commentIDs == null) {
+            log("commentIDs is null");
             return;
         }
         this.commentIDs = commentIDs;
+
+        Runnable refreshIndicator = new Runnable() {
+            @Override
+            public void run() {
+                mSwipeLayout.setRefreshing(true);
+                clear();
+                mCommentsWorker = new CommentsWorker(CommentsFragment.this);
+                mCommentsWorker.fetchComments(commentIDs, forceRefresh);
+            }
+        };
         if(mComments.size() <= 0) {
-            new Handler().postDelayed(refreshIndicator, 600);
+            new Handler().postDelayed(refreshIndicator, 400);
         }
-
-        clear();
-        mCommentsWorker = new CommentsWorker(this);
-        mCommentsWorker.fetchComments(commentIDs);
-
     }
 
     @Override
@@ -139,7 +134,6 @@ public class CommentsFragment extends Fragment {
     public void noStoriesFound() {
         Toast.makeText(getActivity(), "No data found!", Toast.LENGTH_SHORT).show();
     }
-
 
     public void log(String msg){
         Log.e(getClass().getName(), msg + "");

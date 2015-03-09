@@ -26,6 +26,8 @@ public class DatabaseWrapper extends SQLiteOpenHelper {
         Log.i(TAG, "Creating database [" + DATABASE_NAME + " v." + DATABASE_VERSION + "]...");
 
         sqLiteDatabase.execSQL(StoryORM.SQL_CREATE_TABLE);
+        sqLiteDatabase.execSQL(CommentORM.SQL_CREATE_TABLE);
+        sqLiteDatabase.execSQL(ReplyORM.SQL_CREATE_TABLE);
         
     }
 
@@ -41,6 +43,8 @@ public class DatabaseWrapper extends SQLiteOpenHelper {
         Log.i(TAG, "Upgrading database ["+DATABASE_NAME+" v." + oldVersion+"] to ["+DATABASE_NAME+" v." + newVersion+"]...");
 
         sqLiteDatabase.execSQL(StoryORM.SQL_DROP_TABLE);
+        sqLiteDatabase.execSQL(CommentORM.SQL_DROP_TABLE);
+        sqLiteDatabase.execSQL(ReplyORM.SQL_DROP_TABLE);
         onCreate(sqLiteDatabase);
     }
     

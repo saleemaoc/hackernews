@@ -3,10 +3,10 @@ package com.aoc.hn.hackernews;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.aoc.hn.hackernews.obj.CommentItem;
+import com.aoc.hn.hackernews.db.CommentORM;
+import com.aoc.hn.hackernews.models.CommentItem;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.stream.JsonReader;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -15,9 +15,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CommentsWorker {
@@ -29,13 +26,29 @@ public class CommentsWorker {
 		this.commentsFragment = f;
 	}
 
-    public void fetchComments(List<String> commentIDs) {
+    public void fetchComments(List<String> commentIDs, boolean forceRefresh) {
 		for (String id : commentIDs) {
             // log("getting comment " + id);
+            if(!forceRefresh && recordInDB(id)) {
+                continue;
+            }
             CommentItemWorker cw = new CommentItemWorker();
             cw.execute(ListActivity.URL_ITEM_DETAILS + id + ".json");
 		}
 	}
+
+    private boolean recordInDB(String id) {
+        try {
+            CommentItem si = CommentORM.findById(commentsFragment.getActivity(), Long.parseLong(id));
+            if(si != null) {
+                commentsFragment.addCommentItem(si);
+                commentsFragment.hideProgressBar();
+                return true;
+            }
+        } catch (Exception e) {
+        }
+        return false;
+    }
 
 	public void log(String msg){
 		Log.e(getClass().getName(), msg + "");
@@ -70,7 +83,7 @@ public class CommentsWorker {
 		        final Gson gson = gsonBuilder.create();
 				CommentItem comment = gson.fromJson(sb.toString(), CommentItem.class);
                 comment.setLatestReply();
-				log(comment.content);
+				// log(comment.content);
 				return comment;
 			} catch (IllegalStateException e) {
 				e.printStackTrace();
@@ -88,9 +101,10 @@ public class CommentsWorker {
 				// failed to retrieve the story item
 				return;
 			}
+            CommentORM.insert(commentsFragment.getActivity(), commentItem);
 			// we have the story item to show in the list
 			commentsFragment.addCommentItem(commentItem);
 		}
 	}
-	
+
 }
