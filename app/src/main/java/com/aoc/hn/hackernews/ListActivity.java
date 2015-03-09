@@ -4,15 +4,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import java.util.List;
 
 public class ListActivity extends ActionBarActivity {
-
-	public static String URL_TOP_STORIES = "https://hacker-news.firebaseio.com/v0/topstories.json";
-	public static String URL_ITEM_DETAILS = "https://hacker-news.firebaseio.com/v0/item/";
 
 	private StoryFragment mStoriesFragment = null;
 	private StoryWorker mStoriesWorker = null;
@@ -25,11 +20,6 @@ public class ListActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		if (savedInstanceState == null) {
-			// mStoriesFragment = new StoryFragment();
-            // mCommentsFragment = new CommentsFragment();
-			//transaction.add(R.id.container, mStoriesFragment).commit();
-		}
         if(mStoriesFragment == null) {
             mStoriesFragment = (StoryFragment) getSupportFragmentManager().findFragmentById(R.id.stories_fragment);
         }
@@ -43,27 +33,12 @@ public class ListActivity extends ActionBarActivity {
         return mCommentsFragment;
     }
 
-    @Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_list, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
+    /**
+     * show back the story list. this occurs when we have comments screen is displayed and back key is pressed
+     */
     public void showStoriesFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        // transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         transaction.show(mStoriesFragment).hide(mCommentsFragment).commit();
     }
 
@@ -76,8 +51,13 @@ public class ListActivity extends ActionBarActivity {
         super.onBackPressed();
     }
 
+    /**
+     * show Comments screen for selected story
+     * @param commentIDs
+     */
     public void showCommentsFragment(List<String> commentIDs) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        // transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         transaction.show(mCommentsFragment).hide(mStoriesFragment);
         transaction.commit();
         mCommentsFragment.fetchComments(commentIDs, false);

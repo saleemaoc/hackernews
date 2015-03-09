@@ -26,17 +26,29 @@ public class CommentsWorker {
 		this.commentsFragment = f;
 	}
 
+    /**
+     *
+     * @param commentIDs Array of IDs of comments to load
+     * @param forceRefresh whether load from server or from local database
+     */
     public void fetchComments(List<String> commentIDs, boolean forceRefresh) {
 		for (String id : commentIDs) {
             // log("getting comment " + id);
+            // if its not force refresh, load from local db, if we have it
             if(!forceRefresh && recordInDB(id)) {
                 continue;
             }
+            // otherwise download from server
             CommentItemWorker cw = new CommentItemWorker();
-            cw.execute(ListActivity.URL_ITEM_DETAILS + id + ".json");
+            cw.execute(Constants.URL_ITEM_DETAILS + id + ".json");
 		}
 	}
 
+    /**
+     * check if we already have the comment in local database
+     * @param id id of the comment to load
+     * @return comment object or null
+     */
     private boolean recordInDB(String id) {
         try {
             CommentItem si = CommentORM.findById(commentsFragment.getActivity(), Long.parseLong(id));
@@ -53,11 +65,17 @@ public class CommentsWorker {
 	public void log(String msg){
 		Log.e(getClass().getName(), msg + "");
 	}
-	
+
+    /**
+     * cancel any remaining tasks
+     */
 	public void cancel() {
 		this.mCancel = true;
 	}
-	
+
+    /**
+     * Downloads data for a comment, including its latest reply, given its ID
+     */
 	public class CommentItemWorker extends AsyncTask<String, Integer, CommentItem>{
 
 		@Override
@@ -101,6 +119,7 @@ public class CommentsWorker {
 				// failed to retrieve the story item
 				return;
 			}
+            // add comment to local database
             CommentORM.insert(commentsFragment.getActivity(), commentItem);
 			// we have the story item to show in the list
 			commentsFragment.addCommentItem(commentItem);

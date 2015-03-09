@@ -47,7 +47,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
             holder.replyInfo.setText("");
             holder.replyContent.setText("");
             ReplyWorker rw = new ReplyWorker(holder.replyContent, holder.replyInfo, holder.progressBar, ci);
-            rw.execute(ListActivity.URL_ITEM_DETAILS + ci.latestReplyId + ".json");
+            rw.execute(Constants.URL_ITEM_DETAILS + ci.latestReplyId + ".json");
         }
     }
 
@@ -56,7 +56,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         return mComments.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    /**
+     * ViewHolder object for comment and its latest reply
+     */
+    class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView content = null;
         public TextView info = null;
         public TextView replyInfo = null;
@@ -66,24 +69,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         public MyViewHolder(View rowView) {
             super(rowView);
             this.progressBar = (ProgressBar) rowView.findViewById(R.id.progressBar);
-            rowView.setOnClickListener(this);
             content = (TextView) rowView.findViewById(R.id.content);
             info = (TextView) rowView.findViewById(R.id.info);
             replyInfo = (TextView) rowView.findViewById(R.id.replyInfo);
             replyContent = (TextView) rowView.findViewById(R.id.replyContent);
-        }
-
-        public void makeInvisible() {
-            this.progressBar.setVisibility(View.GONE);
-            this.info.setVisibility(View.GONE);
-            this.content.setVisibility(View.GONE);
-            this.replyContent.setVisibility(View.GONE);
-            this.replyInfo.setVisibility(View.GONE);
-        }
-
-        @Override
-        public void onClick(View view) {
-            // Toast.makeText(mContext, mComments.get(getPosition()).latestReplyId, Toast.LENGTH_SHORT).show();
         }
     }
 }

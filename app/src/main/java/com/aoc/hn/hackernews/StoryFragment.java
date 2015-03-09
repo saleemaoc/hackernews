@@ -30,7 +30,6 @@ public class StoryFragment extends Fragment {
 
     List<StoryItem> mStories = null;
     StoryAdapter mAdapter = null;
-    ProgressBar progressBar = null;
     RecyclerView mRecyclerView = null;
     SwipeRefreshLayout mSwipeLayout = null;
     StoryWorker mStoriesWorker = null;
@@ -38,7 +37,7 @@ public class StoryFragment extends Fragment {
     private int previousTotal = 0;
     private boolean loading = true;
     public int visibleThreshold = 20;
-    public int firstVisibleItem, visibleItemCount, totalItemCount;
+    public int totalItemCount;
 
     public StoryFragment() {
     }
@@ -60,25 +59,23 @@ public class StoryFragment extends Fragment {
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
 
-                    visibleItemCount = mRecyclerView.getChildCount();
                     totalItemCount = mStoriesWorker.totalStories.size();
-                    firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
                     int totalLoadedItems = Math.max(mLayoutManager.getItemCount(), mStories.size());
                     int lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
-
                     if (loading) {
                         if (totalLoadedItems > previousTotal) {
                             loading = false;
                             previousTotal = totalLoadedItems;
                         }
                     }
+                    // load more items if we have reached the end of the scroll
                     // log(lastVisibleItem + "; " + totalLoadedItems + "; " + totalItemCount+ "; " + loading);
                     if(!loading && (lastVisibleItem >= (totalLoadedItems - 1) && totalLoadedItems < totalItemCount)) {
                         if(mStoriesWorker.isLoading()) {
-                           log("already loading data.. ");
+                           // log("already loading data.. ");
                             return;
                         }
-                        log("scroll reloaded");
+                        // log("scroll end reached");
                         mSwipeLayout.setRefreshing(true);
                         loading = true;
                         mStoriesWorker.loadMore(lastVisibleItem + 1, lastVisibleItem + 1 + visibleThreshold);
@@ -102,7 +99,6 @@ public class StoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stories_list, container, false);
-        progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.stories_list_view);
         mSwipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeLayout);
         mSwipeLayout.setColorSchemeColors(getResources().getColor(R.color.color_foreground));
@@ -110,6 +106,10 @@ public class StoryFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * a story item received, show it in the list
+     * @param sItem
+     */
     public void addStoryItem(StoryItem sItem) {
 //        log("adding story item");
         mSwipeLayout.setRefreshing(false);
@@ -120,13 +120,17 @@ public class StoryFragment extends Fragment {
         mAdapter.notifyItemInserted(mStories.size());
     }
 
+    /**
+     * retrievew story items
+     * @param forceRefresh
+     */
     public void fetchStories(final boolean forceRefresh) {
         Runnable refreshIndicator = new Runnable() {
             @Override
             public void run() {
                 mSwipeLayout.setRefreshing(true);
                 mStoriesWorker = new StoryWorker(StoryFragment.this, forceRefresh);
-                mStoriesWorker.execute(ListActivity.URL_TOP_STORIES);
+                mStoriesWorker.execute(Constants.URL_TOP_STORIES);
             }
         };
         if(mStories.size() <= 0) {
@@ -136,19 +140,20 @@ public class StoryFragment extends Fragment {
 
     public void hideProgressBar() {
         mSwipeLayout.setRefreshing(false);
-        if(progressBar != null)
-           progressBar.setVisibility(View.GONE);
     }
 
+    // failed to get data from server
     public void noStoriesFound() {
         Toast.makeText(getActivity(), "No data found!", Toast.LENGTH_SHORT).show();
     }
 
+    // save IDs for stories
     public boolean saveStoryIDs(String IDs) {
         SharedPreferences sp = getActivity().getSharedPreferences(Constants.PREFS_FILE_NAME, getActivity().MODE_PRIVATE);
         return sp.edit().putString(Constants.STORIES_IDs, IDs).commit();
     }
 
+    // get IDs of stories if we have it already stored
     public String getStoryIDs() {
         SharedPreferences sp = getActivity().getSharedPreferences(Constants.PREFS_FILE_NAME, getActivity().MODE_PRIVATE);
         return sp.getString(Constants.STORIES_IDs, null);

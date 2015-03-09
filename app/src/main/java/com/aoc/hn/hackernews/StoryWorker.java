@@ -27,15 +27,18 @@ import java.util.List;
 
 public class StoryWorker extends AsyncTask<String, Integer, Boolean>{
 
-//	List<String> stories = null;
     List<String> totalStories = null;
 	StoryFragment storiesFragment = null;
 	private boolean mCancel = false;
     private int counter = 0;
     private boolean forceRefresh = false;
 
+    /**
+     * Download IDs of all the top stories. Store them in a separate list. From that list, download actual stories with infinite scrolling.
+     * @param f
+     * @param forceRefresh whether its must fetch data from server, instead of from local db
+     */
 	public StoryWorker(StoryFragment f, boolean forceRefresh) {
-//		this.stories = new ArrayList<String>();
         this.totalStories = new ArrayList<String>();
 		this.storiesFragment = f;
         this.forceRefresh = forceRefresh;
@@ -56,7 +59,7 @@ public class StoryWorker extends AsyncTask<String, Integer, Boolean>{
 	        JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream));
 	        jsonReader.beginArray();
 
-	        // Type type = new TypeToken<List<String>>(){}.getType();
+            // get IDs of stories in a list
 	        final GsonBuilder gsonBuilder = new GsonBuilder();
 	        final Gson gson = gsonBuilder.create();
 	        while (jsonReader.hasNext()) {
@@ -66,7 +69,6 @@ public class StoryWorker extends AsyncTask<String, Integer, Boolean>{
 	        jsonReader.close();
 	        return true;
 		}catch(UnknownHostException uhe){
-			log("Unknown host exception");
 			uhe.printStackTrace();
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -84,16 +86,18 @@ public class StoryWorker extends AsyncTask<String, Integer, Boolean>{
 		super.onPostExecute(result);
 		// log(result + "");
 		if(!result) {
-            // failed to get the json data
+            // failed to get the json data -- see if we already have previously stored IDs of stories, so the app can load those
             checkLocalStoryIDs();
             return;
         }
+        // we have IDs of top stories here, this could be of use when there is no internet connection
         String ids = "";
         for(String id: totalStories) {
             ids += id + ":";
         }
         ids = ids.substring(0, ids.length() - 1);
         storiesFragment.saveStoryIDs(ids);
+        // load more items
         loadMore(0, storiesFragment.visibleThreshold);
     }
 
@@ -111,6 +115,12 @@ public class StoryWorker extends AsyncTask<String, Integer, Boolean>{
         loadMore(0, storiesFragment.visibleThreshold);
     }
 
+    /**
+     * Load items, either from server or local db, depending on <code>forceRefresh</code> with infinite scrolling. For every refresh,
+     * it will load <code>end - start</code> more items from server
+     * @param start start index of the IDs list
+     * @param end end index of the IDs list.
+     */
     public void loadMore(int start, int end) {
         counter = end - start;
         if(end >= totalStories.size()) {
@@ -126,10 +136,15 @@ public class StoryWorker extends AsyncTask<String, Integer, Boolean>{
                 continue;
             }
             StoryItemWorker cw = new StoryItemWorker();
-            cw.execute(ListActivity.URL_ITEM_DETAILS + id + ".json");
+            cw.execute(Constants.URL_ITEM_DETAILS + id + ".json");
         }
     }
 
+    /**
+     * get story data from local database, given its id
+     * @param id id of the story to load data for, from local database
+     * @return <code>StoryItem</code> object or null if there was no object of the given id in database
+     */
     private StoryItem getFromDB(String id) {
         try {
             StoryItem si = StoryORM.findById(storiesFragment.getActivity(), Long.parseLong(id));
@@ -143,6 +158,10 @@ public class StoryWorker extends AsyncTask<String, Integer, Boolean>{
         return null;
     }
 
+    /**
+     * Check if this worker is already busy in downloading data
+     * @return true if it is already busy in downloading data, false otherwise
+     */
     public boolean isLoading() {
         return this.counter > 0;
     }
@@ -154,7 +173,10 @@ public class StoryWorker extends AsyncTask<String, Integer, Boolean>{
 	public void cancel() {
 		this.mCancel = true;
 	}
-	
+
+    /**
+     * This class gets data from server for a single story object, given its ID.
+     */
 	public class StoryItemWorker extends AsyncTask<String, Integer, StoryItem>{
 
 		@Override

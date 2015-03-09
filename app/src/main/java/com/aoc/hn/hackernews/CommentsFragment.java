@@ -29,7 +29,6 @@ public class CommentsFragment extends Fragment {
 
     List<CommentItem> mComments = null;
     CommentsAdapter mAdapter = null;
-    ProgressBar progressBar = null;
     RecyclerView mRecyclerView = null;
     SwipeRefreshLayout mSwipeLayout = null;
     List<String> commentIDs = null;
@@ -61,20 +60,13 @@ public class CommentsFragment extends Fragment {
 
     }
 
-    @SuppressLint("ResourceAsColor")
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_comments_list, container, false);
-        progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.comments_list_view);
-        mSwipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeLayout);
-        mSwipeLayout.setColorSchemeColors(getResources().getColor(R.color.color_foreground));
-        mSwipeLayout.setProgressBackgroundColor(R.color.color_accent);
-        return rootView;
-    }
-
+    /**
+     * Called by StoryFragment to request to load comments for a selected story
+     * @param commentIDs An array of IDs of comments for the selected story
+     * @param forceRefresh whether it must get results from server and update local db. If there is
+     *                     not internet connection, only then it will load from local db.
+     */
     public void fetchComments(final List<String> commentIDs, final boolean forceRefresh) {
-        log("Fetching comments");
         if(commentIDs == null) {
             log("commentIDs is null");
             return;
@@ -95,6 +87,20 @@ public class CommentsFragment extends Fragment {
         }
     }
 
+    @SuppressLint("ResourceAsColor")
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_comments_list, container, false);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.comments_list_view);
+        mSwipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeLayout);
+        mSwipeLayout.setColorSchemeColors(getResources().getColor(R.color.color_foreground));
+        mSwipeLayout.setProgressBackgroundColor(R.color.color_accent);
+        return rootView;
+    }
+
+    /**
+     * @param hidden
+     */
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
@@ -104,6 +110,10 @@ public class CommentsFragment extends Fragment {
         }
     }
 
+    /**
+     * A new comment is received from server. add it to adapter
+     * @param co
+     */
     public void addCommentItem(CommentItem co) {
 //        log("adding comment item");
         if(co.content == null) {
@@ -111,6 +121,7 @@ public class CommentsFragment extends Fragment {
         }
         mComments.add(co);
         /*
+        // re order views based on time.. and keep the current item on screen (this could be problematic in reading, so not using)
         mRecyclerView.scrollToPosition(mComments.indexOf(co));
         Collections.sort(mComments, new Comparator<CommentItem>(){
             @Override
@@ -119,9 +130,12 @@ public class CommentsFragment extends Fragment {
             }
         });
         */
-        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyItemInserted(mComments.size());
     }
 
+    /**
+     * empty the comments list
+     */
     public void clear() {
         if(mComments == null || mAdapter == null) {
             return;
@@ -129,14 +143,9 @@ public class CommentsFragment extends Fragment {
         mComments.clear();
         mAdapter.notifyDataSetChanged();
     }
+
     public void hideProgressBar() {
         mSwipeLayout.setRefreshing(false);
-        if(progressBar != null)
-           progressBar.setVisibility(View.GONE);
-    }
-
-    public void noStoriesFound() {
-        Toast.makeText(getActivity(), "No data found!", Toast.LENGTH_SHORT).show();
     }
 
     public void log(String msg){

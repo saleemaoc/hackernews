@@ -7,4 +7,8 @@ public class Constants {
 
     public static String PREFS_FILE_NAME = "hackernews.prefs";
     public static String STORIES_IDs = "stories_ids";
+
+    public static String URL_TOP_STORIES = "https://hacker-news.firebaseio.com/v0/topstories.json";
+    public static String URL_ITEM_DETAILS = "https://hacker-news.firebaseio.com/v0/item/";
+
 }

@@ -31,6 +31,13 @@ public class ReplyWorker extends AsyncTask<String, Integer, CommentReplyItem> {
     private ProgressBar progressBar = null;
     private CommentItem commentItem = null;
 
+    /**
+     * Constructor to initialize view references to display data later when downloaded
+     * @param rc text view for content of the reply message
+     * @param ri text view for author and time of the reply message
+     * @param pb progress bar handle
+     * @param ci the comment item object for which we have to load its latest reply
+     */
 	public ReplyWorker(TextView rc, TextView ri, ProgressBar pb, CommentItem ci) {
         this.replyContent = rc;
         this.replyInfo = ri;

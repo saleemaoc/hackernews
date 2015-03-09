@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aoc.hn.hackernews.models.StoryItem;
 
@@ -26,6 +27,12 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.MyViewHolder
         this.mStories = stories;
     }
 
+    /**
+     *
+     * @param parent
+     * @param i
+     * @return
+     */
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int i) {
         View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.story_list_item, parent, false);
@@ -33,6 +40,11 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.MyViewHolder
         return viewHolder;
     }
 
+    /**
+     * bind data at give position in the list, to ViewHolder object
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         final StoryItem si = mStories.get(position);
@@ -46,6 +58,9 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.MyViewHolder
         return this.mStories.size();
     }
 
+    /**
+     * ViewHolder object to hold all views for one story
+     */
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView title = null;
         public TextView info = null;
@@ -70,9 +85,18 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.MyViewHolder
             });
         }
 
+        /**
+         * when story item clicked, show its comments
+         * @param view
+         */
         @Override
         public void onClick(View view) {
-            ((ListActivity) mContext).showCommentsFragment(mStories.get(getPosition()).comments);
+            List<String> comments = mStories.get(getPosition()).comments;
+            if(comments.size() <= 0) {
+                Toast.makeText(mContext, "No comments for this story!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            ((ListActivity) mContext).showCommentsFragment(comments);
         }
     }
 }

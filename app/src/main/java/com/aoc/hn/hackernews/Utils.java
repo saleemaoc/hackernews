@@ -5,6 +5,11 @@ package com.aoc.hn.hackernews;
  */
 public class Utils {
 
+    /**
+     * get a pretty string for difference between current time and give unix time
+     * @param creationTime unix time to create difference of, with respect to current time
+     * @return string like '10 seconds ago', '1 hour ago', '2 days ago' etc.
+     */
     public static String durationFromUnixTime(long creationTime) {
         long currentTime = System.currentTimeMillis()/1000L;
         long diff = currentTime - creationTime;
