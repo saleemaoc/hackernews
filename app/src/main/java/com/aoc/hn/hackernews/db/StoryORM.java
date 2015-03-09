@@ -95,7 +95,7 @@ public class StoryORM {
      * @return
      */
     public static StoryItem findById(Context context, long objectId) {
-        if(objectId == -1) {
+        if(objectId == -1 || context == null) {
             return null;
         }
         DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
@@ -119,9 +119,12 @@ public class StoryORM {
     }
     
     public static boolean insert(Context context, StoryItem si) {
+        if(context == null) {
+            return false;
+        }
         if(si.id >= 0 && findById(context, si.id) != null) {
             Log.i(TAG, "Object already exists in database, not inserting!");
-            return true;//update(context, l2o);
+            return true;
         }
         ContentValues values = objToContentValues(si);
         DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);

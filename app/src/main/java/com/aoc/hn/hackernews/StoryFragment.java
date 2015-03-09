@@ -36,8 +36,8 @@ public class StoryFragment extends Fragment {
 
     private int previousTotal = 0;
     private boolean loading = true;
-    private int visibleThreshold = 5;
-    int firstVisibleItem, visibleItemCount, totalItemCount;
+    public int visibleThreshold = 20;
+    public int firstVisibleItem, visibleItemCount, totalItemCount;
 
     public StoryFragment() {
     }
@@ -60,20 +60,27 @@ public class StoryFragment extends Fragment {
                     super.onScrolled(recyclerView, dx, dy);
 
                     visibleItemCount = mRecyclerView.getChildCount();
-                    totalItemCount = mLayoutManager.getItemCount();
+                    totalItemCount = mStoriesWorker.totalStories.size();
                     firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+                    int totalLoadedItems = Math.max(mLayoutManager.getItemCount(), mStories.size());
+                    int lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
 
                     if (loading) {
-                        if (totalItemCount > previousTotal) {
+                        if (totalLoadedItems > previousTotal) {
                             loading = false;
-                            previousTotal = totalItemCount;
+                            previousTotal = totalLoadedItems;
                         }
                     }
-                    if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-                        // Do something
-                        log("scroll");
-                        mStoriesWorker.loadMore(currentPage * itemsPerPage, ++currentPage * itemsPerPage);
+                    // log(lastVisibleItem + "; " + totalLoadedItems + "; " + totalItemCount+ "; " + loading);
+                    if(!loading && (lastVisibleItem >= (totalLoadedItems - 1) && totalLoadedItems < totalItemCount)) {
+                        if(mStoriesWorker.isLoading()) {
+                           log("already loading data.. ");
+                            return;
+                        }
+                        log("scroll reloaded");
+                        mSwipeLayout.setRefreshing(true);
                         loading = true;
+                        mStoriesWorker.loadMore(lastVisibleItem + 1, lastVisibleItem + 1 + visibleThreshold);
                     }
                 }
             });
@@ -90,9 +97,6 @@ public class StoryFragment extends Fragment {
         });
     }
 
-    int itemsPerPage = 10;
-    public int currentPage = 1;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stories_list, container, false);
@@ -105,6 +109,10 @@ public class StoryFragment extends Fragment {
     public void addStoryItem(StoryItem sItem) {
 //        log("adding story item");
         mSwipeLayout.setRefreshing(false);
+        if(mStories.contains(sItem)) {
+            log("already exists");
+            return;
+        }
         mStories.add(sItem);
         mAdapter.notifyItemInserted(mStories.size());
     }

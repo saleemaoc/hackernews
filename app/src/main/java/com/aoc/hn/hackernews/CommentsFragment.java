@@ -111,12 +111,15 @@ public class CommentsFragment extends Fragment {
             return;
         }
         mComments.add(co);
+        /*
+        mRecyclerView.scrollToPosition(mComments.indexOf(co));
         Collections.sort(mComments, new Comparator<CommentItem>(){
             @Override
             public int compare(CommentItem commentItem, CommentItem commentItem2) {
                 return (int) (commentItem2.time - commentItem.time);
             }
         });
+        */
         mAdapter.notifyDataSetChanged();
     }
 

@@ -27,6 +27,7 @@ public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
     List<String> totalStories = null;
 	StoryFragment storiesFragment = null;
 	private boolean mCancel = false;
+    private int counter = 0;
 
 	public StoriesWorker(StoryFragment f) {
 //		this.stories = new ArrayList<String>();
@@ -84,34 +85,40 @@ public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
 			return;
 		}
 		// TODO
-        loadMore(0, 10);
+        loadMore(0, storiesFragment.visibleThreshold);
     }
 
     public void loadMore(int start, int end) {
+        counter = end - start;
         if(end >= totalStories.size()) {
-            end = totalStories.size() - 1;
+            end = totalStories.size();
         }
         if(start >= end) {
             log("returning");
             return;
         }
-        for (int i = start; i <= end; i++) {
+        for (int i = start; i < end; i++) {
             String id = totalStories.get(i);
             try {
                 StoryItem si = StoryORM.findById(storiesFragment.getActivity(), Long.parseLong(id));
                 if(si != null) {
-                    StoryORM.insert(storiesFragment.getActivity(), si);
                     storiesFragment.addStoryItem(si);
+                    counter--;
                     continue;
                 }
             } catch (Exception e) {
+                continue;
             }
             StoryItemWorker cw = new StoryItemWorker();
             cw.execute(ListActivity.URL_ITEM_DETAILS + id + ".json");
         }
     }
 
-	public void log(String msg){
+    public boolean isLoading() {
+        return this.counter > 0;
+    }
+
+    public void log(String msg){
 		Log.e(getClass().getName(), msg);
 	}
 	
@@ -144,7 +151,7 @@ public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
 		        final Gson gson = gsonBuilder.create();
 				StoryItem sItem = gson.fromJson(sb.toString(), StoryItem.class);
 				sItem.truncateComments();
-				log(sItem.title);
+				log(sItem.id + " : " + sItem.title);
 				return sItem;
 			} catch (IllegalStateException e) {
 				e.printStackTrace();
@@ -153,14 +160,16 @@ public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
 			}
 			return null;
 		}
-		
+
 		@Override
 		protected void onPostExecute(StoryItem storyItem) {
 			super.onPostExecute(storyItem);
+            counter--;
 			if(storyItem == null) {
 				// failed to retrieve the story item
 				return;
 			}
+            StoryORM.insert(storiesFragment.getActivity(), storyItem);
 			// we have the story item to show in the list
 			storiesFragment.addStoryItem(storyItem);
 		}

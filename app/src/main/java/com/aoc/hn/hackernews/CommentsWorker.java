@@ -31,7 +31,7 @@ public class CommentsWorker {
 
     public void fetchComments(List<String> commentIDs) {
 		for (String id : commentIDs) {
-            log("getting comment " + id);
+            // log("getting comment " + id);
             CommentItemWorker cw = new CommentItemWorker();
             cw.execute(ListActivity.URL_ITEM_DETAILS + id + ".json");
 		}
@@ -52,7 +52,7 @@ public class CommentsWorker {
             if(mCancel) {
                 return null;
             }
-			log("requesting " + params[0]);
+			// log("requesting " + params[0]);
 			StringBuilder sb = new StringBuilder();
 			try {
 				DefaultHttpClient httpClient = new DefaultHttpClient();
