@@ -120,15 +120,15 @@ public class StoryFragment extends Fragment {
         @Override
         public void run() {
             mSwipeLayout.setRefreshing(true);
+            mStoriesWorker = new StoriesWorker(StoryFragment.this);
+            mStoriesWorker.execute(ListActivity.URL_TOP_STORIES);
         }
     };
 
     public void fetchStories() {
         if(mStories.size() <= 0) {
-            new Handler().postDelayed(refreshIndicator, 600);
+            new Handler().postDelayed(refreshIndicator, 6000);
         }
-        mStoriesWorker = new StoriesWorker(StoryFragment.this);
-        mStoriesWorker.execute(ListActivity.URL_TOP_STORIES);
     }
 
     public void hideProgressBar() {
@@ -139,7 +139,6 @@ public class StoryFragment extends Fragment {
 
     public void noStoriesFound() {
         Toast.makeText(getActivity(), "No data found!", Toast.LENGTH_SHORT).show();
-
     }
 
     public boolean saveStoryIDs(String IDs) {
