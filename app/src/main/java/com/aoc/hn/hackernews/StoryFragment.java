@@ -32,7 +32,7 @@ public class StoryFragment extends Fragment {
     ProgressBar progressBar = null;
     RecyclerView mRecyclerView = null;
     SwipeRefreshLayout mSwipeLayout = null;
-    StoriesWorker mStoriesWorker = null;
+    StoryWorker mStoriesWorker = null;
 
     private int previousTotal = 0;
     private boolean loading = true;
@@ -86,13 +86,13 @@ public class StoryFragment extends Fragment {
             });
         }
 
-        fetchStories();
+        fetchStories(false  );
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mStories.clear();
                 mAdapter.notifyDataSetChanged();
-                fetchStories();
+                fetchStories(true);
             }
         });
     }
@@ -117,16 +117,15 @@ public class StoryFragment extends Fragment {
         mAdapter.notifyItemInserted(mStories.size());
     }
 
-    Runnable refreshIndicator = new Runnable() {
-        @Override
-        public void run() {
-            mSwipeLayout.setRefreshing(true);
-            mStoriesWorker = new StoriesWorker(StoryFragment.this);
-            mStoriesWorker.execute(ListActivity.URL_TOP_STORIES);
-        }
-    };
-
-    public void fetchStories() {
+    public void fetchStories(final boolean forceRefresh) {
+        Runnable refreshIndicator = new Runnable() {
+            @Override
+            public void run() {
+                mSwipeLayout.setRefreshing(true);
+                mStoriesWorker = new StoryWorker(StoryFragment.this, forceRefresh);
+                mStoriesWorker.execute(ListActivity.URL_TOP_STORIES);
+            }
+        };
         if(mStories.size() <= 0) {
             new Handler().postDelayed(refreshIndicator, 600);
         }

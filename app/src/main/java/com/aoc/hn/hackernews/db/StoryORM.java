@@ -123,7 +123,7 @@ public class StoryORM {
         }
         if(si.id >= 0 && findById(context, si.id) != null) {
             Log.i(TAG, "Object already exists in database, not inserting!");
-            return true;
+            return update(context, si);
         }
         ContentValues values = objToContentValues(si);
         DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
@@ -145,6 +145,29 @@ public class StoryORM {
         return success;
     }
 
+    public static boolean update(Context context, StoryItem si) {
+        if(context == null) {
+            return false;
+        }
+        ContentValues values = objToContentValues(si);
+        DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
+        SQLiteDatabase database = databaseWrapper.getWritableDatabase();
+        boolean success = false;
+        try {
+            if (database != null) {
+                long objectId = database.update(StoryORM.TABLE_NAME, values, "id='" + si.id + "'", null);
+                Log.i(TAG, "Updated Object with ID: " + objectId);
+                success = true;
+            }
+        } catch (NullPointerException ex) {
+            Log.e(TAG, "Failed to update object[" + si.id + "] due to: " + ex);
+        } finally {
+            if(database != null) {
+                database.close();
+            }
+        }
+        return success;
+    }
     private static ContentValues objToContentValues(StoryItem si) {
         ContentValues values = new ContentValues();
         values.put(StoryORM.COLUMN_SERVER_ID, si.id);

@@ -25,18 +25,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
+public class StoryWorker extends AsyncTask<String, Integer, Boolean>{
 
 //	List<String> stories = null;
     List<String> totalStories = null;
 	StoryFragment storiesFragment = null;
 	private boolean mCancel = false;
     private int counter = 0;
+    private boolean forceRefresh = false;
 
-	public StoriesWorker(StoryFragment f) {
+	public StoryWorker(StoryFragment f, boolean forceRefresh) {
 //		this.stories = new ArrayList<String>();
         this.totalStories = new ArrayList<String>();
 		this.storiesFragment = f;
+        this.forceRefresh = forceRefresh;
 	}
 
 	@Override
@@ -120,18 +122,25 @@ public class StoriesWorker extends AsyncTask<String, Integer, Boolean>{
         }
         for (int i = start; i < end; i++) {
             String id = totalStories.get(i);
-            try {
-                StoryItem si = StoryORM.findById(storiesFragment.getActivity(), Long.parseLong(id));
-                if(si != null) {
-                    storiesFragment.addStoryItem(si);
-                    counter--;
-                    continue;
-                }
-            } catch (Exception e) {
+            if(!forceRefresh && getFromDB(id) != null) {
+                continue;
             }
             StoryItemWorker cw = new StoryItemWorker();
             cw.execute(ListActivity.URL_ITEM_DETAILS + id + ".json");
         }
+    }
+
+    private StoryItem getFromDB(String id) {
+        try {
+            StoryItem si = StoryORM.findById(storiesFragment.getActivity(), Long.parseLong(id));
+            if(si != null) {
+                storiesFragment.addStoryItem(si);
+                counter--;
+                return si;
+            }
+        } catch (Exception e) {
+        }
+        return null;
     }
 
     public boolean isLoading() {

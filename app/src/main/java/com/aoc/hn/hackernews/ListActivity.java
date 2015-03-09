@@ -15,7 +15,7 @@ public class ListActivity extends ActionBarActivity {
 	public static String URL_ITEM_DETAILS = "https://hacker-news.firebaseio.com/v0/item/";
 
 	private StoryFragment mStoriesFragment = null;
-	private StoriesWorker mStoriesWorker = null;
+	private StoryWorker mStoriesWorker = null;
 
     private CommentsFragment mCommentsFragment = null;
     private CommentsWorker mCommentsWorker = null;
