@@ -66,6 +66,7 @@ public class CommentsFragment extends Fragment {
         progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.comments_list_view);
         mSwipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeLayout);
+        mSwipeLayout.setColorSchemeColors(getResources().getColor(R.color.color_primary));
         return rootView;
     }
 

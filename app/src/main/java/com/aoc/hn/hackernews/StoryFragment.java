@@ -103,6 +103,7 @@ public class StoryFragment extends Fragment {
         progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.stories_list_view);
         mSwipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeLayout);
+        mSwipeLayout.setColorSchemeColors(getResources().getColor(R.color.color_primary));
         return rootView;
     }
 
@@ -127,7 +128,7 @@ public class StoryFragment extends Fragment {
 
     public void fetchStories() {
         if(mStories.size() <= 0) {
-            new Handler().postDelayed(refreshIndicator, 6000);
+            new Handler().postDelayed(refreshIndicator, 600);
         }
     }
 
